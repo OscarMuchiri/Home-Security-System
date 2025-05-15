@@ -1,6 +1,6 @@
-# ================================
-# 📌 Import Required Libraries
-# ================================
+
+# Libraries
+
 import RPi.GPIO as GPIO         # For controlling Raspberry Pi GPIO pins
 import time
 import os
@@ -18,7 +18,7 @@ import asyncio        # For asynchronous Telegram notifications
 from tflite_runtime.interpreter import Interpreter
 
 # ================================
-# 📌 GPIO Hardware Configuration
+#  GPIO Hardware Configuration
 # ================================
 gpio_components = {
     'pir_sensor': 11,   # PIR motion sensor connected to GPIO pin 11
@@ -34,10 +34,10 @@ GPIO.output(gpio_components['led'], False)    # Ensure LED is initially off
 GPIO.output(gpio_components['piezo'], False)  # Ensure buzzer is initially off
 
 # ================================
-# 📌 Telegram Bot Configuration
+# Telegram Bot Configuration
 # ================================
-TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'  # Replace with your bot's token
-# Replace with your Telegram chat ID
+TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE' 
+
 CHAT_ID = 'YOUR_CHAT_ID_HERE'
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
@@ -75,7 +75,7 @@ with open("coco_labels.txt", "r") as f:
     labels = [line.strip() for line in f.readlines()]
 
 # ================================
-# 📌 Event Logging Configuration
+#Event Logging Configuration
 # ================================
 DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
 CSV_FILE = os.path.join(DESKTOP_PATH, "motion_log.csv")
@@ -97,9 +97,9 @@ def log_event(event_type):
         csv.writer(f).writerow([timestamp, event_type])
     print(f"{timestamp} - {event_type} (Logged)")
 
-# ================================
-# 📌 Object Detection Function
-# ================================
+
+#  Object Detection Function
+
 
 
 def detect_object():
@@ -151,9 +151,9 @@ def detect_object():
     return None, None  # No confident detections found
 
 
-# ================================
-# 📌 Main Monitoring Loop
-# ================================
+
+#  Main Monitoring Loop
+
 try:
     print("✅ System ready - Monitoring for motion...")
     last_state = False  # Keeps track of previous motion state
