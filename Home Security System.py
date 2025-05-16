@@ -17,9 +17,9 @@ import asyncio        # For asynchronous Telegram notifications
 # TensorFlow Lite for AI object detection
 from tflite_runtime.interpreter import Interpreter
 
-# ================================
+
 #  GPIO Hardware Configuration
-# ================================
+
 gpio_components = {
     'pir_sensor': 11,   # PIR motion sensor connected to GPIO pin 11
     'piezo': 7,         # Buzzer connected to GPIO pin 7
@@ -33,9 +33,9 @@ GPIO.setup(gpio_components['led'], GPIO.OUT)
 GPIO.output(gpio_components['led'], False)    # Ensure LED is initially off
 GPIO.output(gpio_components['piezo'], False)  # Ensure buzzer is initially off
 
-# ================================
+
 # Telegram Bot Configuration
-# ================================
+
 TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE' 
 
 CHAT_ID = 'YOUR_CHAT_ID_HERE'
@@ -62,9 +62,9 @@ def send_telegram_alert(message, image_path=None):
     )
 
 
-# ================================
-# 📌 TensorFlow Lite AI Setup
-# ================================
+
+# TensorFlow Lite AI Setup
+
 interpreter = Interpreter(model_path="detect.tflite")  # Load AI model
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
@@ -74,9 +74,9 @@ output_details = interpreter.get_output_details()
 with open("coco_labels.txt", "r") as f:
     labels = [line.strip() for line in f.readlines()]
 
-# ================================
+
 #Event Logging Configuration
-# ================================
+
 DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
 CSV_FILE = os.path.join(DESKTOP_PATH, "motion_log.csv")
 motion_log = deque(maxlen=100)  # Store last 100 events in memory
@@ -170,7 +170,7 @@ try:
             if label == "person":
                 GPIO.output(gpio_components['piezo'], True)  # Activate buzzer
                 send_telegram_alert(
-                    "🚨 Intruder detected! Check the attached image.", image_path)
+                    "Intruder detected! Check the attached image.", image_path)
                 time.sleep(2)  # Keep buzzer on for 2 seconds
                 GPIO.output(gpio_components['piezo'], False)
                 log_event("ALERT: Person Detected")
@@ -188,7 +188,7 @@ try:
         time.sleep(0.05)  # Reduce CPU usage
 
 except KeyboardInterrupt:
-    print("\n🛑 Shutting down gracefully...")
+    print("\n🛑 Shutting down...")
 
 finally:
     # Cleanup GPIO before exiting
