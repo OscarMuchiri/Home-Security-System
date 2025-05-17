@@ -26,7 +26,7 @@ gpio_components = {
     'led': 13            # LED indicator connected to GPIO pin 13
 }
 
-GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
+GPIO.setmode(GPIO.BOARD)  # Using the physical pin numbering
 GPIO.setup(gpio_components['pir_sensor'], GPIO.IN)
 GPIO.setup(gpio_components['piezo'], GPIO.OUT)
 GPIO.setup(gpio_components['led'], GPIO.OUT)
@@ -81,7 +81,7 @@ DESKTOP_PATH = os.path.join(os.path.expanduser('~'), 'Desktop')
 CSV_FILE = os.path.join(DESKTOP_PATH, "motion_log.csv")
 motion_log = deque(maxlen=100)  # Store last 100 events in memory
 
-# Create log file if it doesn't exist
+# Creating the log file if it doesn't already exist
 Path(DESKTOP_PATH).mkdir(parents=True, exist_ok=True)
 if not os.path.exists(CSV_FILE):
     with open(CSV_FILE, 'w', newline='') as f:
@@ -99,8 +99,6 @@ def log_event(event_type):
 
 
 #  Object Detection Function
-
-
 
 def detect_object():
     """Capture image and run object detection. Returns detected label and image path."""
