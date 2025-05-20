@@ -34,14 +34,14 @@ GPIO.output(gpio_components['led'], False)    # Ensure LED is initially off
 GPIO.output(gpio_components['piezo'], False)  # Ensure buzzer is initially off
 
 
-# Telegram Bot Configuration
+# Telegram Configuration
 
 TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE' 
 
-CHAT_ID = 'YOUR_CHAT_ID_HERE'
+CHAT_ID = 'CHAT_ID_HERE'
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
-# Set up an asynchronous loop for non-blocking message sending
+# Seting up an asynchronous loop for non-blocking message sending
 loop = asyncio.new_event_loop()
 threading.Thread(target=loop.run_forever, daemon=True).start()
 
