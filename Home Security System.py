@@ -1,5 +1,5 @@
 
-# Libraries
+# Importing Libraries
 
 import RPi.GPIO as GPIO         # For controlling Raspberry Pi GPIO pins
 import time
