@@ -34,7 +34,7 @@ GPIO.output(gpio_components['led'], False)    # Ensure LED is initially off
 GPIO.output(gpio_components['piezo'], False)  # Ensure buzzer is initially off
 
 
-# Telegram Configuration
+# Telegram Config
 
 TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE' 
 
@@ -70,7 +70,7 @@ interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
-# Load object detection labels (e.g., person, cat, dog)
+# Load object detection labels
 with open("coco_labels.txt", "r") as f:
     labels = [line.strip() for line in f.readlines()]
 
