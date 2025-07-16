@@ -1,7 +1,7 @@
 
 # Importing Libraries
 
-import RPi.GPIO as GPIO         # For controlling Raspberry Pi GPIO pins
+import RPi.GPIO as GPIO         # controlling Raspberry Pi GPIO pins
 import time
 import os
 import csv             # time: delays & timestamps, os: file paths, csv: event logging
@@ -26,7 +26,7 @@ gpio_components = {
     'led': 13            # LED indicator connected to GPIO pin 13
 }
 
-GPIO.setmode(GPIO.BOARD)  # Using the physical pin numbering
+GPIO.setmode(GPIO.BOARD)  # Using the actual physical pin numbering
 GPIO.setup(gpio_components['pir_sensor'], GPIO.IN)
 GPIO.setup(gpio_components['piezo'], GPIO.OUT)
 GPIO.setup(gpio_components['led'], GPIO.OUT)
