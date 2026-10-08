@@ -1,5 +1,8 @@
 # Smart Home Security System with Edge AI
 
+[![Python syntax check](https://github.com/OscarMuchiri/Home-Security-System/actions/workflows/syntax-check.yml/badge.svg)](https://github.com/OscarMuchiri/Home-Security-System/actions/workflows/syntax-check.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A Raspberry Pi security prototype that combines **motion sensing, computer vision, TensorFlow Lite edge inference, physical alarms, Telegram notifications, and local event logging**.
 
 The system uses a PIR sensor to detect movement, captures an image with the Raspberry Pi Camera, runs local object detection, and escalates the event when the detected class is `person`.
