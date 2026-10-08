@@ -1,0 +1,8 @@
+# Python dependencies for the Raspberry Pi home security prototype
+# Install system-level Raspberry Pi camera support separately if required by your OS.
+
+RPi.GPIO
+opencv-python
+numpy
+python-telegram-bot
+tflite-runtime
