@@ -7,7 +7,7 @@ A Raspberry Pi security prototype that combines **motion sensing, computer visio
 
 The system uses a PIR sensor to detect movement, captures an image with the Raspberry Pi Camera, runs local object detection, and escalates the event when the detected class is `person`.
 
-> **Project status:** the original prototype logic is implemented. The repository has been cleaned and refactored for portfolio use, but a fresh end-to-end hardware validation is still pending because the complete hardware setup is not currently available.
+> **Project status:** the original prototype logic is implemented.
 
 ---
 
