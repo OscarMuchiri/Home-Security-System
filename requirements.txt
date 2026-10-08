@@ -1,8 +1,8 @@
-# Python dependencies for the Raspberry Pi home security prototype
-# Install system-level Raspberry Pi camera support separately if required by your OS.
+# Python dependencies for the Raspberry Pi prototype.
+# Picamera2 is normally installed through Raspberry Pi OS packages.
 
 RPi.GPIO
 opencv-python
 numpy
-python-telegram-bot
+python-telegram-bot>=20
 tflite-runtime
