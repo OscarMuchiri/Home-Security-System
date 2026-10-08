@@ -36,9 +36,15 @@ GPIO.output(gpio_components['piezo'], False)  # Ensure buzzer is initially off
 
 # Telegram Config
 
-TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE' 
+# Read credentials from environment variables so secrets are not stored in source control.
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-CHAT_ID = 'CHAT_ID_HERE'
+if not TELEGRAM_BOT_TOKEN or not CHAT_ID:
+    raise RuntimeError(
+        "Missing Telegram configuration. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID."
+    )
+
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
 # Seting up an asynchronous loop for non-blocking message sending
