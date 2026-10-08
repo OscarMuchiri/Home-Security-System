@@ -105,6 +105,7 @@ The pin mapping is defined in `GPIO_COMPONENTS` inside `home_security.py`.
 ```text
 Home-Security-System/
 ├── docs/
+│   ├── HARDWARE_REVALIDATION.md
 │   └── MODEL_SETUP.md
 ├── .env.example
 ├── .gitignore
@@ -133,7 +134,7 @@ The current implementation expects the detector outputs to be ordered as:
 2. class IDs;
 3. confidence scores.
 
-See [docs/MODEL_SETUP.md](docs/MODEL_SETUP.md) for the model-interface assumptions and validation notes.
+See [docs/MODEL_SETUP.md](docs/MODEL_SETUP.md) for the model-interface assumptions and validation notes. A separate [hardware revalidation checklist](docs/HARDWARE_REVALIDATION.md) is ready for when the physical components are available again.
 
 ---
 
