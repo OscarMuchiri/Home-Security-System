@@ -1,324 +1,287 @@
 # Smart Home Security System with Edge AI
 
-A Raspberry Pi-based intelligent home security prototype that combines motion sensing, computer vision, local object detection, physical alarms, event logging, and Telegram notifications.
+A Raspberry Pi security prototype that combines **motion sensing, computer vision, TensorFlow Lite edge inference, physical alarms, Telegram notifications, and local event logging**.
 
-The system monitors a protected area using a PIR motion sensor. When motion is detected, the Raspberry Pi captures an image using the Pi Camera and performs local object detection using a TensorFlow Lite model. If a person is identified, the system activates an audible alarm and sends an image-based security alert through Telegram.
+The system uses a PIR sensor to detect movement, captures an image with the Raspberry Pi Camera, runs local object detection, and escalates the event when the detected class is `person`.
 
----
-
-## Overview
-
-Traditional motion sensors can trigger alarms whenever movement occurs, regardless of whether the source is actually a person.
-
-This project improves on a basic motion-triggered alarm by introducing an AI-based verification stage.
-
-Instead of immediately treating every movement as an intrusion, the system:
-
-1. Detects movement using a PIR sensor.
-2. Captures an image using the Raspberry Pi Camera.
-3. Runs TensorFlow Lite object detection locally.
-4. Determines whether a person has been detected.
-5. Activates the buzzer when a person is identified.
-6. Sends a Telegram notification with the detected image.
-7. Logs security events to a CSV file.
-
-This creates a simple edge-AI security system in which sensing, image processing, and decision-making take place directly on the Raspberry Pi.
+> **Project status:** the original prototype logic is implemented. The repository has been cleaned and refactored for portfolio use, but a fresh end-to-end hardware validation is still pending because the complete hardware setup is not currently available.
 
 ---
 
-## System Architecture
+## What the system does
+
+1. Monitors a PIR motion sensor.
+2. Turns on an LED when motion begins.
+3. Captures an image using the Raspberry Pi Camera.
+4. Runs TensorFlow Lite object detection locally on the Raspberry Pi.
+5. Accepts detections above a `0.65` confidence threshold.
+6. If a person is detected:
+   - activates the buzzer;
+   - sends a Telegram alert with the detected image;
+   - logs the event.
+7. If the detection is not a person, sends a normal-motion notification.
+8. Records events in a CSV log.
+9. Cleans up GPIO resources when the application exits.
+
+---
+
+## System architecture
 
 ```text
-        PIR Motion Sensor
-               │
-               ▼
-         Raspberry Pi
-               │
-               ▼
-          Pi Camera
-      Captures an Image
-               │
-               ▼
-      TensorFlow Lite Model
-        Object Detection
-               │
-               ▼
-        Is it a Person?
-          /          \
-        Yes           No
-         │             │
-         ▼             ▼
-   Activate Buzzer   Normal Motion
-         │            Notification
-         ▼
- Telegram Alert
- + Detected Image
-         │
-         ▼
-      CSV Logging
+PIR Motion Sensor
+       │
+       ▼
+  Raspberry Pi
+       │
+       ▼
+   Pi Camera
+       │
+       ▼
+TensorFlow Lite
+Object Detection
+       │
+       ▼
+  Person detected?
+    /        \
+  Yes         No
+   │           │
+   ▼           ▼
+Buzzer      Normal-motion
++ Telegram  notification
+photo
+    \         /
+     \       /
+      ▼     ▼
+      CSV event log
 ```
 
 ---
 
-## Key Features
+## Technology stack
 
-- PIR-based motion detection
-- Raspberry Pi Camera image capture
-- TensorFlow Lite edge inference
-- OpenCV image processing
-- Person detection with confidence filtering
-- Bounding-box visualization
-- GPIO-controlled buzzer alarm
-- LED activity indicator
-- Telegram security notifications
-- Image-based intrusion alerts
-- Asynchronous Telegram message handling
-- CSV event logging
-- In-memory storage of recent security events
-- Graceful GPIO cleanup when the program exits
-
----
-
-## Technologies Used
-
-| Technology | Purpose |
+| Technology | Role |
 |---|---|
-| Python | Main application logic |
+| Python | Application logic |
 | Raspberry Pi | Edge-computing platform |
 | RPi.GPIO | PIR sensor, LED and buzzer control |
 | Picamera2 | Raspberry Pi Camera interface |
-| TensorFlow Lite | Lightweight object-detection inference |
+| TensorFlow Lite | Local object-detection inference |
 | OpenCV | Image processing and annotation |
-| NumPy | Image-array processing |
-| Telegram Bot API | Remote security notifications |
-| AsyncIO | Non-blocking Telegram communication |
-| CSV | Local security-event logging |
+| NumPy | Image tensor handling |
+| python-telegram-bot | Remote Telegram notifications |
+| AsyncIO / threading | Non-blocking notification dispatch |
+| CSV | Local event logging |
 
 ---
 
-## Hardware Components
+## Hardware configuration
 
-The current implementation is designed around:
+The implementation is designed for:
 
 - Raspberry Pi
 - Raspberry Pi Camera
 - PIR motion sensor
 - Piezo buzzer
 - LED
-- Appropriate resistors and connecting wires
-- Breadboard or equivalent prototyping connections
+- Appropriate resistors, jumper wires and breadboard/prototyping connections
 
-The application currently uses physical GPIO board numbering.
+The code uses **physical BOARD pin numbering**.
 
-| Component | Physical Pin |
+| Component | Physical pin |
 |---|---:|
-| PIR Sensor | 11 |
-| Piezo Buzzer | 7 |
+| PIR sensor | 11 |
+| Piezo buzzer | 7 |
 | LED | 13 |
 
-Hardware configuration can be changed in the `gpio_components` dictionary in the Python application.
+The pin mapping is defined in `GPIO_COMPONENTS` inside `home_security.py`.
 
 ---
 
-## Detection Workflow
-
-When the system starts, it continuously monitors the PIR sensor.
-
-When new motion is detected:
+## Repository structure
 
 ```text
-Motion Detected
-      ↓
-LED Activated
-      ↓
-Capture Camera Frame
-      ↓
-Resize Image
-      ↓
-TensorFlow Lite Inference
-      ↓
-Confidence > 65%?
-      ↓
-Identify Detected Object
-      ↓
-Person Detected?
+Home-Security-System/
+├── docs/
+│   └── MODEL_SETUP.md
+├── .env.example
+├── .gitignore
+├── LICENSE
+├── README.md
+├── home_security.py
+└── requirements.txt
 ```
 
-If the detected object is a person:
-
-```text
-Buzzer ON
-    ↓
-Telegram Alert
-    ↓
-Detected Image Sent
-    ↓
-Event Logged
-```
-
-If the detected object is not a person, the system sends a normal-motion notification without activating the intrusion alarm.
+The TensorFlow Lite model and matching label file are runtime dependencies and are intentionally not committed until their exact source and redistribution terms are verified.
 
 ---
 
-## Object Detection
+## Required local runtime files
 
-The application loads a TensorFlow Lite object-detection model using:
-
-```python
-Interpreter(model_path="detect.tflite")
-```
-
-Object labels are loaded from:
+Place these files beside `home_security.py`:
 
 ```text
+detect.tflite
 coco_labels.txt
 ```
 
-Only detections with a confidence score greater than `0.65` are currently accepted.
+The current implementation expects the detector outputs to be ordered as:
 
-Detected objects are annotated using OpenCV with:
+1. bounding boxes;
+2. class IDs;
+3. confidence scores.
 
-- Bounding boxes
-- Object labels
-- Detection confidence
-
-The annotated image is then saved locally and can be sent through Telegram when a person is detected.
+See [docs/MODEL_SETUP.md](docs/MODEL_SETUP.md) for the model-interface assumptions and validation notes.
 
 ---
 
-## Telegram Notifications
+## Telegram configuration
 
-The system uses a Telegram bot to provide remote security notifications.
+The application reads credentials from environment variables rather than storing secrets in source control.
 
-Two configuration values are required:
+Required variables:
 
-```python
-TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
-CHAT_ID = "CHAT_ID_HERE"
+```text
+TELEGRAM_BOT_TOKEN
+TELEGRAM_CHAT_ID
 ```
 
-Real credentials should never be committed to a public repository.
+A reference template is provided in `.env.example`.
 
-A future improvement to this project will move these values into environment variables or a local configuration file excluded through `.gitignore`.
+For example, in a shell session:
+
+```bash
+export TELEGRAM_BOT_TOKEN="your_bot_token"
+export TELEGRAM_CHAT_ID="your_chat_id"
+python home_security.py
+```
+
+> `.env.example` is documentation only. The application reads process environment variables directly and does not automatically load a `.env` file.
 
 ---
 
-## Event Logging
+## Installation
 
-Security events are stored in:
+### 1. Prepare Raspberry Pi OS
 
-```text
-motion_log.csv
+Use a Raspberry Pi OS installation with camera support enabled and Picamera2 available.
+
+Picamera2 is commonly provided through Raspberry Pi OS system packages rather than ordinary PyPI installation, so it is intentionally not listed in `requirements.txt`.
+
+### 2. Install Python dependencies
+
+```bash
+python3 -m pip install -r requirements.txt
 ```
 
-Each event contains:
+### 3. Add the detector files
+
+Place:
 
 ```text
-Timestamp, Event
+detect.tflite
+coco_labels.txt
 ```
 
-Example events include:
+in the repository root.
+
+### 4. Set Telegram environment variables
+
+Set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in the environment used to start the application.
+
+### 5. Run
+
+```bash
+python3 home_security.py
+```
+
+---
+
+## Event logging
+
+Runtime events are written to:
+
+```text
+~/Desktop/motion_log.csv
+```
+
+The application also keeps the most recent 100 events in memory.
+
+Example event types include:
 
 ```text
 MOTION DETECTED
 ALERT: Person Detected
-Normal Motion Detected
+Normal Motion Detected: <label>
 MOTION ENDED
 ```
 
-The system also keeps the most recent 100 events in memory using Python's `deque`.
-
----
-
-## Repository Structure
-
-The repository is being reorganized toward the following structure:
+Captured runtime images are stored as:
 
 ```text
-Home-Security-System/
-│
-├── src/
-│   └── home_security.py
-│
-├── models/
-│   ├── detect.tflite
-│   └── coco_labels.txt
-│
-├── docs/
-│   ├── architecture.png
-│   ├── wiring-diagram.png
-│   └── system-demo.jpg
-│
-├── README.md
-├── requirements.txt
-├── .gitignore
-└── LICENSE
+~/Desktop/frame.jpg
+~/Desktop/detected.jpg
 ```
 
-The current repository contains the original Python implementation. Additional project files and documentation are being added as part of repository cleanup.
+These generated files are excluded from Git.
 
 ---
 
-## Running the System
+## Software improvements made during repository cleanup
 
-The application is intended to run directly on a Raspberry Pi with the required hardware and software dependencies installed.
+The portfolio version now includes:
 
-The TensorFlow Lite model and class-label file must also be available to the application.
+- professional project documentation;
+- safe Telegram credential handling through environment variables;
+- explicit runtime validation for missing credentials/model files;
+- model and label paths resolved relative to the application file;
+- model input dimensions read dynamically from the TensorFlow Lite input tensor;
+- safer camera shutdown using `try/finally`;
+- GPIO setup and cleanup separated into dedicated functions;
+- a conventional `main()` entry point;
+- clearer dependency documentation;
+- runtime output and secret exclusions through `.gitignore`;
+- TensorFlow Lite model-interface documentation;
+- MIT licensing.
 
-Once configured, the system can be started using:
-
-```bash
-python home_security.py
-```
-
-The application then begins monitoring for motion continuously until it is stopped.
-
----
-
-## Current Project Status
-
-The core system logic has been implemented, including:
-
-- Motion detection
-- Raspberry Pi Camera capture
-- TensorFlow Lite object detection
-- Person-based alarm decisions
-- Telegram notifications
-- Event logging
-- GPIO cleanup
-
-The original system was developed as a Raspberry Pi security prototype.
-
-The repository is currently being improved for reproducibility and documentation. The complete hardware setup is not presently available for a fresh end-to-end hardware validation, so future refactoring will preserve the intended system behaviour until physical re-testing can be completed.
+These changes are software/documentation improvements and intentionally preserve the original hardware pin mapping and overall system workflow.
 
 ---
 
-## Future Improvements
+## Current limitations
 
-Potential improvements include:
-
-- Environment-variable based credential management
-- More robust camera lifecycle management
-- Configurable detection thresholds
-- Improved TensorFlow Lite model configuration
-- Multiple-camera support
-- Web-based monitoring dashboard
-- Remote arming and disarming
-- Event-image history
-- Database-backed security logs
-- Push notification alternatives
-- Improved false-positive filtering
-- Hardware watchdog and automatic recovery
+- The original `detect.tflite` model is not included in the public repository.
+- The matching label file is not included until the original model package is verified.
+- Detector output ordering is preserved from the original implementation and should be verified when the original model is recovered.
+- The latest repository refactor has been syntax-reviewed, but has not yet been re-tested on the complete physical hardware setup.
+- This is a prototype and should not be treated as a certified or sole security system.
 
 ---
 
-## Project Purpose
+## Future improvements
+
+Potential extensions include:
+
+- configurable output directory;
+- remote arming/disarming;
+- event history dashboard;
+- persistent database logging;
+- camera lifecycle optimization for continuous operation;
+- configurable detection thresholds;
+- model metadata validation;
+- multiple-camera support;
+- hardware watchdog and recovery;
+- improved false-positive handling;
+- deployment as a Raspberry Pi system service.
+
+---
+
+## Portfolio relevance
 
 This project demonstrates the integration of:
 
-**Embedded Systems + Internet of Things + Computer Vision + Edge AI + Automation**
+**Embedded Systems · IoT · Computer Vision · Edge AI · Automation · Python**
 
-It shows how lightweight machine-learning inference can be combined with physical sensors and remote communication to build an intelligent monitoring system.
+It complements software-only machine-learning projects by showing how AI inference can be connected to physical sensors, actuators and real-time notifications.
 
 ---
 
