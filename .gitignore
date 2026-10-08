@@ -30,3 +30,4 @@ detected.jpg
 
 # Local model artifacts (add explicitly later if redistribution is permitted)
 detect.tflite
+coco_labels.txt
